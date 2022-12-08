@@ -15,47 +15,49 @@ function App() {
   const [pageFlow, setPageFlow] = useState(1);
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
-  const [pesquisa, setPesquisa] = useState({ nome: "", email: "" });
 
   useEffect(() => {
     getUsuarios();
   }, []);
 
-  const getUsuarios = () => {
-    axios
-      .get(
+  const getUsuarios = async () => {
+    try {
+      const response = await axios.get(
         "https://us-central1-labenu-apis.cloudfunctions.net/labenusers/users",
         {
           headers: {
-            Authorization: "ana-sammi-barbosa",
+            Authorization: "veloso-ammal",
           },
         }
-      )
-      .then((res) => {
-        setUsuarios(res.data);
-      })
-      .catch((error) => {
-        console.log(error.response);
-      });
+      );
+      setUsuarios(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+    // .then((res) => {
+    //   setUsuarios(res.data);
+    // })
+    // .catch((error) => {
+    //   console.log(error.response);
+    // });
   };
 
-  const pesquisaUsuario = (pesquisa) => {
-    axios
-      .get(
+  const pesquisaUsuario = async (pesquisa) => {
+    try {
+      const response = await axios.get(
         `https://us-central1-labenu-apis.cloudfunctions.net/labenusers/users/search?name=${pesquisa.nome}&email=${pesquisa.email}`,
         {
           headers: {
-            Authorization: "ana-sammi-barbosa",
+            Authorization: "veloso-ammal",
           },
         }
-      )
-      .then((res) => {
-        setUsuarios(res.data);
-        setPageFlow(3)
-      })
-      .catch((error) => {
-        console.log(error.response);
-      });
+      );
+      setUsuarios(response.data);
+      setPageFlow(3);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const onChangeName = (e) => {
@@ -67,21 +69,19 @@ function App() {
   };
 
   const enviarDados = () => {
-    const novaPesquisa = {
+    const pesquisa = {
       nome,
       email,
     };
-    setPesquisa(novaPesquisa);
     pesquisaUsuario(pesquisa);
-    setNome("")
-    setEmail("")
-    
+    setNome("");
+    setEmail("");
   };
 
   const onClickVoltar = () => {
     getUsuarios();
-    setPageFlow(1)
-  }
+    setPageFlow(1);
+  };
 
   return (
     <div>
@@ -117,7 +117,6 @@ function App() {
                   Cadastrar
                 </ButtonCadastro>
               )}
-              
             </ContainerBarra>
             {usuarios.map((usuario) => {
               return (
@@ -132,7 +131,6 @@ function App() {
             })}
           </>
         )}
-        
       </ContainerPrincipal>
     </div>
   );
